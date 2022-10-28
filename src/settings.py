@@ -169,7 +169,7 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to the Golf",
 
     # Copyright on the footer
-    "copyright": "Acme Library Ltd",
+    "copyright": "Golf Cart",
 
     # The model admin to search from the search bar, search bar omitted if excluded
     "search_model": "auth.User",
