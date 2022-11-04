@@ -3,15 +3,16 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view,permission_classes
 from users.serializer import SendPasswordResetEmailSerializer, UserChangePasswordSerializer, UserLoginSerializer, UserPasswordResetSerializer, UserProfileSerializer, UserRegistrationSerializer
 from django.contrib.auth import authenticate
 from users.renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated , AllowAny
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 import json
 from datetime import datetime
-
+from django.views.decorators.csrf import csrf_protect
 
 
 def get_tokens_for_user(user):    
@@ -30,8 +31,11 @@ class UserRegistrationView(APIView):
       token = get_tokens_for_user(user)
       return Response({'token':token, 'msg':'Registration Successful'}, status=status.HTTP_201_CREATED)
 
+
 class UserLoginView(APIView):
     renderer_classes = [UserRenderer]
+    
+    @csrf_protect
     def post(self, request, format=None):
       serializer = UserLoginSerializer(data=request.data)
       serializer.is_valid(raise_exception=True)
@@ -45,6 +49,9 @@ class UserLoginView(APIView):
         'user':{'is_admin':user.is_admin , 'birthdate':user.date_of_birth}})
       else:
         return Response({'errors':{'non_field_errors':['Email or Password is not Valid']}}, status=status.HTTP_404_NOT_FOUND)
+
+
+
 
 class UserProfileView(APIView):
     renderer_classes = [UserRenderer]
